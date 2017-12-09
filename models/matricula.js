@@ -12,14 +12,11 @@ const MatriculaSchema = Schema({
                              nombre: String
                            ]
                ],
-    pagos: [{ inscripcion: Number, creado: { type: Date, default: Date.now }  },
-              pago1: Number, creado: { type: Date, default: Date.now }  },
-              pago2: Number, creado: { type: Date, default: Date.now }  },
-              pago3: Number, creado: { type: Date, default: Date.now }  },
-              pago4: Number, creado: { type: Date, default: Date.now }  },
-              pago5: Number, creado: { type: Date, default: Date.now }  }
-           }],
-    creado: { type: Date, default: Date.now }
+    pagos: [ nombre: String,
+             pago: Number,
+             creado: { type: Date, default: Date.now } ],
+    creado: { type: Date, default: Date.now },
+    usuario: String
 })
 
 module.exports = mongoose.model('Matricula', MatriculaSchema)
