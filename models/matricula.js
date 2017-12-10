@@ -2,21 +2,26 @@
 
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
+const dincrement = require('dsi-mongoose-auto-increment')
+
 
 const MatriculaSchema = Schema({
-    recibo: { type: Number},
     id_alumno: String,
-    matricula: [ nivel: String,
+    matricula: [ { nivel: String,
                  cuatrimestre: String,
-                 materias: [ unidad_credito: String,
-                             nombre: String
-                           ]
-               ],
-    pagos: [ nombre: String,
+                 materias: [{ unidad_credito: String,
+                             nombre: String,
+                           }]
+               }],
+    pagos: [{ nombre: String,
              pago: Number,
-             creado: { type: Date, default: Date.now } ],
+             creado: { type: Date, default: Date.now }
+           }],
     creado: { type: Date, default: Date.now },
-    usuario: String
+    usuario: String,
+    finalizo: String
 })
+
+MatriculaSchema.plugin(dincrement);
 
 module.exports = mongoose.model('Matricula', MatriculaSchema)

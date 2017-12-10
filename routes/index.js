@@ -7,6 +7,8 @@ const userCtrl = require('../controllers/user')
 const profesorCtrl =  require('../controllers/profesor')
 const alumnoCtrl =  require('../controllers/alumno')
 const MateriaCtrl = require('../controllers/materia')
+const MatriculaCtrl = require('../controllers/matricula')
+const PagoCtrl = require('../controllers/pago')
 
 const api = express.Router()
 // soporte
@@ -51,5 +53,17 @@ api.get('/materia/', auth, MateriaCtrl.getMateria)
 api.delete('/materia/:id', auth, MateriaCtrl.eliminar)
 api.put('/materia/:id', auth, MateriaCtrl.editar)
 // fin materia
+
+
+// Matricula
+api.post('/matricula/buscar', auth, MatriculaCtrl.buscar)
+api.post('/matricula/guardar', auth, MatriculaCtrl.guardar)
+api.get('/matricula/', auth, MatriculaCtrl.getMatricula)
+api.delete('/matricula/:id', auth, MatriculaCtrl.eliminar)
+// fin Matricula
+
+// pagos
+api.post('/pago/buscar', auth, PagoCtrl.buscar)
+// fin pagos
 
 module.exports = api
