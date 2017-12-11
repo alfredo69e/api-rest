@@ -9,12 +9,13 @@ const MatriculaSchema = Schema({
     id_alumno: String,
     matricula: [ { nivel: String,
                  cuatrimestre: String,
-                 materias: [{ unidad_credito: String,
-                             nombre: String,
+                 materias: [{ /* unidad_credito: String,
+                             nombre: String*/
                            }]
                }],
-    pagos: [{ nombre: String,
-             pago: Number,
+    pagos: [{ id: Number,
+              nombre: String,
+              costo: Number,
              creado: { type: Date, default: Date.now }
            }],
     creado: { type: Date, default: Date.now },

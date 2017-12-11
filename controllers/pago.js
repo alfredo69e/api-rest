@@ -37,6 +37,21 @@ function buscar(req, res) {
 }
 
 function guardar(req, res) {
+  let id = req.params.id
+  let pago = req.body.cobro
+  if (pago.id == '7') {
+
+    Matricula.findOneAndUpdate(id, { finalizo: 'SI', $push: { pagos: { id: pago.id, nombre: pago.nombre, costo: pago.costo   } } }, (err, matri) => {
+         if(err) return res.status(500).send({massage: `Error al Actualizar el Alumno:  ${err}`})
+
+            res.status(200).send({ nombre: 'Pago', message: 'El Pago se Realizo Correctamente'});
+           })
+}else {
+  Matricula.findOneAndUpdate(id, { $push: { pagos: { id: pago.id, nombre: pago.nombre, costo: pago.costo   } } }, (err, matri) => {
+    if(err) return res.status(500).send({massage: `Error al Actualizar el Alumno:  ${err}`})
+    res.status(200).send({ nombre: 'Pago', message: 'El Pago se Realizo Correctamente'});
+  })
+}
 
 }
 
@@ -45,8 +60,18 @@ function eliminar(req, res) {
 }
 
 
+function eliminarArray(req, res) {
+  let id = req.params.id
+  let idArray = req.params.idArray
+  Matricula.findOneAndUpdate(id, { $pull: { pagos: { _id:  idArray  } } }, (err, matri) => {
+    if(err) return res.status(500).send({massage: `Error al Actualizar el Alumno:  ${err}`})
+    res.status(200).send({ nombre: 'Pago', message: 'El Pago se Elimino Correctamente' });
+  });
+}
+
 module.exports = {
   buscar,
   guardar,
-  eliminar
+  eliminar,
+  eliminarArray
 }

@@ -38,6 +38,7 @@ function guardar(req, res){
     id_alumno: req.body._id,
     matricula: [{ nivel:  req.body.nivel,
                   cuatrimestre: req.body.ano_curso,
+                   materias: req.body.materias
                 }],
     usuario: req.user,
     finalizo: 'NO'
@@ -45,15 +46,6 @@ function guardar(req, res){
 
   matricula.save((err, matri) => {
       if(err) res.status(500).send({ nombre: 'Ooops...', message: `Error al registrar la Matricula: ${err}`})
-
- for (var i = 0; i < req.body.materias.length; i++) {
-   matricula.update({
-     $addToSet:
-       { materias:
-          { $each: [ { unidad_credito: req.body.materias[i].unidad_credito, nombre: req.body.materias[i].nombre } ] }
-       }
-                  })
-      }
 
       res.status(200).send({nombre: 'Matricula',
                             message: `La Inscripcion de Realizo Corretamente Numero del Recibo es: ${matri._id}`})
