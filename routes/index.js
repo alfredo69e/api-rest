@@ -64,8 +64,8 @@ api.delete('/matricula/:id', auth, MatriculaCtrl.eliminar)
 
 // pagos
 api.post('/pago/buscar', auth, PagoCtrl.buscar)
-api.put('/pago/:id', auth, PagoCtrl.guardar)
-api.put('/pago/:id/:idArray', auth, PagoCtrl.eliminarArray)
+api.post('/pago/', auth, PagoCtrl.guardar)
+api.post('/pago/Array', auth, PagoCtrl.eliminarArray)
 // fin pagos
 
 module.exports = api
