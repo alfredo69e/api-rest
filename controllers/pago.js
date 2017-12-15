@@ -107,12 +107,30 @@ function guardar(req, res) {
    if (!matri) return res.status(404).send({ nombre: 'Ooops...', message: 'Matricula no Existen' })
 
    matri.update({ finalizo: 'NO', $push: { pagos: { id: pago.id, nombre: pago.nombre, costo: pago.costo   } } }, (err, matri) => {
-     if(err) return res.status(500).send({massage: `Error al Actualizar la Matricula:  ${err}`})
+     if(err) return res.status(500).send({nombre: 'Ooops...', massage: `Error al Actualizar la Matricula:  ${err}`})
 
      res.status(200).send({ nombre: 'Pago', message: 'El Pago se Realizo Correctamente'});
    })
    })
 }
+
+}
+
+function guardarProf(req, res) {
+	
+  let id = req.body.prof._id
+  let pago = req.body.pagar
+  
+  Profesor.findOne({ _id: id}, (err, prof) => {
+   if(err) return res.status(500).send({nombre: 'Oops...', massage: `Error al Actualizar la Matricula:  ${err}`})
+   if (!prof) return res.status(404).send({ nombre: 'Ooops...', message: 'Profesor no Existen' })
+
+   prof.update({ $push: { pago: { comentario: pago.comentario, costo: pago.costo, comida: pago.comida   } } }, (err, prof) => {
+     if(err) return res.status(500).send({ nombre: 'Ooops...', massage: `Error al Actualizar el Pago:  ${err}`})
+
+     res.status(200).send({ nombre: 'Pago', message: 'El Pago se Realizo Correctamente'});
+   })
+   })
 
 }
 
@@ -164,10 +182,26 @@ function eliminarArray(req, res) {
   })
 }
 
+function eliminarPagoProf(req, res) {
+  let _id = req.body.prof._id
+  let id = req.body.data._id
+  Profesor.findOne( { _id: _id}, (err, prof) => {
+   if(err) return res.status(500).send({nombre: 'Oops...', massage: `Error al Actualizar la Matricula:  ${err}`})
+   if (!prof) return res.status(404).send({ nombre: 'Ooops...', message: 'Pago no Existe' })
+
+  prof.update({ $pull: { pago: { _id:  id  } } }, (err, prof) => {
+    if(err) return res.status(500).send({massage: `Error al Actualizar el Alumno:  ${err}`})
+    res.status(200).send({ nombre: 'Pago', message: 'El Pago se Elimino Correctamente' });
+  })
+  })
+}
+
 module.exports = {
   buscar,
   guardar,
   eliminar,
   eliminarArray,
-  buscarProf
+  buscarProf,
+  guardarProf,
+  eliminarPagoProf
 }
