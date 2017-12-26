@@ -12,7 +12,13 @@ function buscar(req, res){
            if(err) return res.status(500).send({  nombre: 'Ooops...', message: err})
            if(!alumno) return res.status(404).send({  nombre: 'Alumno', message: 'Alumno no Resgitra en Sistema...'})
 
-           res.status(200).send(alumno)
+      Matricula.find({id_alumno: alumno._id}, (err, matri) => {
+          if(err) return res.status(500).send({ nombre: 'Ooops...', message: err})
+
+        res.status(200).send({alumno: alumno, matri: matri})
+      })
+
+
         })
   }
   if (dato === 'celular') {
@@ -37,15 +43,15 @@ function buscar(req, res){
 
 
 function guardar(req, res){
-	
-	Matricula.find({ id_alumno: req.body._id }, (err, matri) => {
+
+  Matricula.find({ id_alumno: req.body._id }, (err, matri) => {
            if(err) return res.status(500).send({  nombre: 'Ooops...', message: err})
-           if(!matri) return res.status(404).send({  nombre: 'Matricula', message: 'El alumno no tiene Matricula Inscritra...'})	   
+           if(!matri) return res.status(404).send({  nombre: 'Matricula', message: 'El alumno no tiene Matricula Inscritra...'})
 
 		let datos = matri.pop()
 
 if (datos.finalizo === 'SI'){
-			
+
 			let matricula = new Matricula({
 			id_alumno: req.body._id,
 			matricula: [{ nivel:  req.body.nivel,
@@ -63,12 +69,11 @@ if (datos.finalizo === 'SI'){
 								message: `La Inscripcion de Realizo Corretamente Numero del Recibo es: ${matri._id}`})
 		})
 		}else{
-			res.status(200).send({nombre: 'Alumno',
+			res.status(404).send({nombre: 'Alumno',
                             message: `El Alumno no A terminado de Pagar la Matricula N°: ${datos._id}`})
-		}	
+		}
 	 })
-	
-	
+
 
 }
 
@@ -99,5 +104,5 @@ module.exports = {
   guardar,
   getMatricula,
   eliminar,
-  
+
 }

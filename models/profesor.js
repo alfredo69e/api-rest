@@ -13,15 +13,6 @@ const ProfesorSchema = Schema({
     correo: {type: String, unique: true, lowercase: true},
     direccion: String,
     creado: { type:Date, default: Date.now },
-	pago: [{  id: Number,
-              comentario: String,
-              costo: Number,
-			  comida: Number,
-             creado: { type: Date, default: Date.now }
-           }],
-	recibo: Number
 })
-
-ProfesorSchema.plugin(dincrement,  { 'pago': 'id' });
 
 module.exports = mongoose.model('Profesor', ProfesorSchema)

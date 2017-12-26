@@ -3,19 +3,26 @@
 const Matricula = require("../models/matricula")
 const Alumno = require("../models/alumno")
 const Profesor = require("../models/profesor")
+const PagoProf = require("../models/pagoProfesor")
+const PagoAlumno = require("../models/pagoAlumno")
 
 function buscar(req, res) {
   let dato = req.body.dato
   let buscar = req.body.buscar.toLowerCase();
-  
+
   if (dato === 'recibo') {
        Matricula.findOne({ _id: buscar }, (err, matri) => {
            if(err) return res.status(500).send({  nombre: 'Ooops...', message: err})
            if(!matri) return res.status(404).send({  nombre: 'Recibo', message: 'El Recibo no Existe...'})
 
-       Alumno.findOne({ _id: matri.id_alumno }, (err, alum) => {
+      PagoAlumno.find({ id: matri._id }, (err, pago) => {
+          if(err) return res.status(500).send({  nombre: 'Ooops...', message: err})
 
-          res.status(200).send({ recibo: matri, alumno: alum})
+      Alumno.findOne({ _id: matri.id_alumno }, (err, alum) => {
+            if(err) return res.status(500).send({  nombre: 'Ooops...', message: err})
+
+             res.status(200).send({ recibo: matri, alumno: alum, pago: pago})
+           })
        })
     })
   }
@@ -23,19 +30,17 @@ function buscar(req, res) {
        Alumno.findOne({celular: buscar }, (err, alumno) => {
            if(err) return res.status(500).send({  nombre: 'Ooops...', message: err})
            if(!alumno) return res.status(404).send({  nombre: 'Alumno', message: 'Alumno no Resgitra en Sistema...'})
-			   
+
        Matricula.find({ id_alumno: alumno._id }, (err, matri) => {
            if(err) return res.status(500).send({  nombre: 'Ooops...', message: err})
            if(!matri) return res.status(404).send({  nombre: 'Matricula', message: 'El alumno no tiene Matricula Inscritra...'})
-			   
-		console.log(matri)
-		let datos = matri.pop()
-		console.log('datos: ' + datos)
+
+    let datos = matri.pop()
 		let recibo = datos._id
 
 		Matricula.findOne({_id: recibo}, (err, matri) => {
 			 if(err) return res.status(500).send({  nombre: 'Ooops...', message: err})
-	
+
 			res.status(200).send({ recibo: matri, alumno: alumno})
 		})
 		})
@@ -45,7 +50,7 @@ function buscar(req, res) {
              Alumno.findOne({cedula: buscar }, (err, alumno) => {
            if(err) return res.status(500).send({  nombre: 'Ooops...', message: err})
            if(!alumno) return res.status(404).send({  nombre: 'Alumno', message: 'Alumno no Resgitra en Sistema...'})
-			   
+
        Matricula.find({ id_alumno: alumno._id }, (err, matri) => {
            if(err) return res.status(500).send({  nombre: 'Ooops...', message: err})
            if(!matri) return res.status(404).send({  nombre: 'Matricula', message: 'El alumno no tiene Matricula Inscritra...'})
@@ -55,18 +60,18 @@ function buscar(req, res) {
 
 		Matricula.findOne({_id: recibo}, (err, matri) => {
 			 if(err) return res.status(500).send({  nombre: 'Ooops...', message: err})
-	
+
 			res.status(200).send({ recibo: matri, alumno: alumno})
 		})
 		})
         })
   }
-  
+
    if (dato === 'correo') {
              Alumno.findOne({correo: buscar }, (err, alumno) => {
            if(err) return res.status(500).send({  nombre: 'Ooops...', message: err})
            if(!alumno) return res.status(404).send({  nombre: 'Alumno', message: 'Alumno no Resgitra en Sistema...'})
-			   
+
        Matricula.find({ id_alumno: alumno._id }, (err, matri) => {
            if(err) return res.status(500).send({  nombre: 'Ooops...', message: err})
            if(!matri) return res.status(404).send({  nombre: 'Matricula', message: 'El alumno no tiene Matricula Inscritra...'})
@@ -76,7 +81,7 @@ function buscar(req, res) {
 
 		Matricula.findOne({_id: recibo}, (err, matri) => {
 			 if(err) return res.status(500).send({  nombre: 'Ooops...', message: err})
-	
+
 			res.status(200).send({ recibo: matri, alumno: alumno})
 		})
 		})
@@ -86,49 +91,62 @@ function buscar(req, res) {
 }
 
 function guardar(req, res) {
-  let id = req.body.recibo._id
-  let pago = req.body.cobro
-  if (pago.id == '7') {
 
-    Matricula.findOne({ _id: id}, (err, matri) => {
-     if(err) return res.status(500).send({nombre: 'Oops...', massage: `Error al Actualizar la Matricula:  ${err}`})
-     if (!matri) return res.status(404).send({ nombre: 'Ooops...', message: 'Matricula no Existen' })
+  let valido = true;
+  let pagosRealizados = 0;
 
-     matri.update({ finalizo: 'SI', $push: { pagos: { id: pago.id, nombre: pago.nombre, costo: pago.costo   } } }, (err, matri) => {
-       if(err) return res.status(500).send({massage: `Error al Actualizar la Matricula:  ${err}`})
+      let pagoAlumno = new PagoAlumno({
+			id: req.body.recibo._id,
+			costo: req.body.regPago.costo,
+			comentario: req.body.regPago.comentario,
+			})
 
-       res.status(200).send({ nombre: 'Pago', message: 'El Pago se Realizo Correctamente'});
-     })
-   })
-}else {
+      pagoAlumno.save((err, pago) =>{
+        if(err) return res.status(500).send({nombre: 'Oops...', massage: `Error al realizar El Pago:  ${err}`})
 
-  Matricula.findOne( { _id: id}, (err, matri) => {
-   if(err) return res.status(500).send({nombre: 'Oops...', massage: `Error al Actualizar la Matricula:  ${err}`})
-   if (!matri) return res.status(404).send({ nombre: 'Ooops...', message: 'Matricula no Existen' })
+      PagoAlumno.find({ id: pago.id  }, (err, pagos) => {
+          if(err) return res.status(500).send({nombre: 'Oops...', massage: `Error al realizar El Pago:  ${err}`})
 
-   matri.update({ finalizo: 'NO', $push: { pagos: { id: pago.id, nombre: pago.nombre, costo: pago.costo   } } }, (err, matri) => {
-     if(err) return res.status(500).send({nombre: 'Ooops...', massage: `Error al Actualizar la Matricula:  ${err}`})
+          for (var i = 0; i < pagos.length; i++) {
+              pagosRealizados = pagosRealizados + pagos[i].costo
+              if ( pagosRealizados === req.body.recibo.costo ) {
+                valido = false;
+              }
+          }
 
-     res.status(200).send({ nombre: 'Pago', message: 'El Pago se Realizo Correctamente'});
-   })
-   })
-}
+      if (valido){
+          res.status(200).send({ nombre: 'Pago', message: 'El Pago se Realizo Correctamente'});
+      }else {
+        Matricula.update({ _id: req.body.recibo._id }, { finalizo: 'SI' }, (err, matri) => {
+            if(err) return res.status(500).send({nombre: 'Oops...', massage: `Error al realizar El Pago:  ${err}`})
+
+          res.status(200).send({ nombre: 'Pago', message: 'El Pago se Realizo Correctamente y es el Ultimo'});
+
+        })
+      }
+      })
+      })
+
 
 }
 
 function guardarProf(req, res) {
-	
-  let id = req.body.prof._id
-  let pago = req.body.pagar
-  
-  Profesor.findOne({ _id: id}, (err, prof) => {
+
+  Profesor.findOne({ _id: req.body.prof._id}, (err, prof) => {
    if(err) return res.status(500).send({nombre: 'Oops...', massage: `Error al Actualizar la Matricula:  ${err}`})
    if (!prof) return res.status(404).send({ nombre: 'Ooops...', message: 'Profesor no Existen' })
 
-   prof.update({ $push: { pago: { comentario: pago.comentario, costo: pago.costo, comida: pago.comida   } } }, (err, prof) => {
-     if(err) return res.status(500).send({ nombre: 'Ooops...', massage: `Error al Actualizar el Pago:  ${err}`})
+   let pago = new PagoProf({
+     id: prof._id,
+     comentario:  req.body.pagar.comentario,
+     costo: req.body.pagar.costo,
+     comida: req.body.pagar.comida,
+   })
 
-     res.status(200).send({ nombre: 'Pago', message: 'El Pago se Realizo Correctamente'});
+   pago.save((err, pagoProf) => {
+       if(err) return res.status(500).send({ nombre: 'Ooops...', message: `Error al registrar el Pago: ${err}`})
+
+       res.status(200).send({ nombre: 'Pago de Profesor', message: 'Se registro correctamente' })
    })
    })
 
@@ -146,7 +164,15 @@ function buscarProf(req, res){
            if(err) return res.status(500).send({  nombre: 'Ooops...', message: err})
            if(!prof) return res.status(404).send({  nombre: 'Profesor', message: 'Cedula no Resgitra en Sistema...'})
 
-           res.status(200).send(prof)
+      PagoProf.find({ id:  prof._id}, (err, pagos) => {
+             if(err) return res.status(500).send({  nombre: 'Ooops...', message: err})
+
+             res.status(200).send({ 'prof': prof,
+                                    'pagos': pagos
+                                  })
+      })
+
+
         })
   }
   if (dato === 'celular') {

@@ -9,6 +9,7 @@ const alumnoCtrl =  require('../controllers/alumno')
 const MateriaCtrl = require('../controllers/materia')
 const MatriculaCtrl = require('../controllers/matricula')
 const PagoCtrl = require('../controllers/pago')
+const MovimientoCtrl = require('../controllers/movimiento')
 
 const api = express.Router()
 // soporte
@@ -34,9 +35,9 @@ api.get('/profesor/', auth, profesorCtrl.getProfesor)
 api.delete('/profesor/:id', auth, profesorCtrl.eliminar)
 api.post('/profesor/validateCorreo', auth, profesorCtrl.validateCorreo)
 api.post('/profesor/validateCedula', auth, profesorCtrl.validateCedula)
+api.post('/profesor/validateCelular', auth, profesorCtrl.validateCelular)
 api.put('/profesor/:id', auth, profesorCtrl.editar)
 // fin profesor
-
 
 // alumno
 api.post('/alumno/registrar', auth, alumnoCtrl.registrar)
@@ -54,7 +55,6 @@ api.delete('/materia/:id', auth, MateriaCtrl.eliminar)
 api.put('/materia/:id', auth, MateriaCtrl.editar)
 // fin materia
 
-
 // Matricula
 api.post('/matricula/buscar', auth, MatriculaCtrl.buscar)
 api.post('/matricula/guardar', auth, MatriculaCtrl.guardar)
@@ -70,5 +70,10 @@ api.post('/pago/profesor/buscar', auth, PagoCtrl.buscarProf)
 api.post('/pago/profesor/guardar', auth, PagoCtrl.guardarProf)
 api.post('/pago/profesor/eliminar/pago', auth, PagoCtrl.eliminarPagoProf)
 // fin pagos
+
+// Movimiento
+api.post('/movimiento/buscar', auth, MovimientoCtrl.buscar)
+
+// fin Movimiento
 
 module.exports = api

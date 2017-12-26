@@ -43,7 +43,7 @@ function eliminar(req, res) {
 }
 
 function validateCorreo(req, res) {
-  Profesor.findOne({'correo': req.body.correo }, (err, prof) => {
+  Profesor.findOne({ correo: req.body.correo }, (err, prof) => {
       if (err) return res.status(500).send({  nombre: 'Correo', message: err })
       if (!prof) return res.status(200).send(false)
       if (prof) return res.status(200).send(true)
@@ -51,8 +51,16 @@ function validateCorreo(req, res) {
 }
 
 function validateCedula(req, res) {
-  Profesor.findOne({'cedula': req.body.cedula }, (err, prof) => {
+  Profesor.findOne({ cedula: req.body.cedula }, (err, prof) => {
       if (err) return res.status(500).send({  nombre: 'Cedula', message: err })
+      if (!prof) return res.status(200).send(false)
+      if (prof) return res.status(200).send(true)
+  })
+}
+
+function validateCelular(req, res) {
+  Profesor.findOne({ celular: req.body.celular }, (err, prof) => {
+      if (err) return res.status(500).send({  nombre: 'Celular', message: err })
       if (!prof) return res.status(200).send(false)
       if (prof) return res.status(200).send(true)
   })
@@ -69,11 +77,14 @@ function editar(req, res) {
 
 }
 
+
+
 module.exports = {
   registrar,
   getProfesor,
   eliminar,
   validateCorreo,
   validateCedula,
+  validateCelular,
   editar
 }
