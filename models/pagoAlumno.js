@@ -8,7 +8,8 @@ const PagoAlumnoSchema = Schema({
   id: String,
   costo: Number,
   comentario: String,
-  creado: { type: Date, default: Date.now }
+  creado: { type: Date, default: Date.now },
+  usuario: String
 })
 
 //for individual model:

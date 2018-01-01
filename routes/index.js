@@ -10,6 +10,7 @@ const MateriaCtrl = require('../controllers/materia')
 const MatriculaCtrl = require('../controllers/matricula')
 const PagoCtrl = require('../controllers/pago')
 const MovimientoCtrl = require('../controllers/movimiento')
+const DashboardCtrl = require('../controllers/dashboard')
 
 const api = express.Router()
 // soporte
@@ -65,15 +66,20 @@ api.delete('/matricula/:id', auth, MatriculaCtrl.eliminar)
 // pagos
 api.post('/pago/buscar', auth, PagoCtrl.buscar)
 api.post('/pago/', auth, PagoCtrl.guardar)
-api.post('/pago/Array', auth, PagoCtrl.eliminarArray)
+api.delete('/pago/:id', auth, PagoCtrl.eliminarArray)
 api.post('/pago/profesor/buscar', auth, PagoCtrl.buscarProf)
 api.post('/pago/profesor/guardar', auth, PagoCtrl.guardarProf)
-api.post('/pago/profesor/eliminar/pago', auth, PagoCtrl.eliminarPagoProf)
+api.delete('/pago/profesor/:id', auth, PagoCtrl.eliminarPagoProf)
+api.post('/pago/varios', auth, PagoCtrl.varios)
+api.get('/pago/varios', auth, PagoCtrl.getVarios)
 // fin pagos
 
 // Movimiento
 api.post('/movimiento/buscar', auth, MovimientoCtrl.buscar)
-
 // fin Movimiento
+
+// Dashboard
+api.get('/dashboard', auth, DashboardCtrl.getDashboard)
+// fin Dashboard
 
 module.exports = api
